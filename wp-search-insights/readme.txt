@@ -4,10 +4,10 @@ Donate link: https://www.paypal.me/wpsearchinsights
 Tags: search, analytics, statistics, tracking, optimization
 Requires at least: 4.8
 License: GPL2
-Tested up to: 6.6
-Requires PHP: 5.6
-Stable tag: 1.3.9
-Gain valuable insights into your website's search performance and user behavior. Optimize your content based on real search data.
+Tested up to: 6.7
+Requires PHP: 7.0
+Stable tag: 1.4.0
+Gain valuable insights into your website's search performance and user behavior. Optimize your content based on real search data and boost engagement.
 
 == Description ==
 WP Search Insights is a powerful WordPress search analytics plugin that records all searches made on your website. It has helped countless website owners optimize their content and improve user engagement. Get a clear understanding of what your users are searching for and take your website's search experience to the next level. With a clean and intuitive dashboard, you can easily see which posts, pages, or products users are searching from and what search queries are most popular.
@@ -24,6 +24,8 @@ Don't miss out on the opportunity to unleash the full potential of your website'
 * Privacy-friendly approach to search analytics
 
 == Improve Your WordPress Search Experience ==
+WP Search Insights helps you improve the WordPress earch experience in the following ways:
+
 = Understand Your Users' Search Behavior =
 By understanding what your users are searching for, you can optimize your website's content to better meet their needs. WP Search Insights provides you with the data you need to make informed decisions about your content strategy, ultimately leading to a better user experience and increased engagement.
 
@@ -66,6 +68,9 @@ To install this plugin:
 4. Follow the link in the activation notice to access your WP Search Insights dashboard.
 
 == Changelog ==
+= 1.4.0 =
+* Fixed a textdomain notification introduced in WordPress 6.7
+
 = 1.3.9 =
 * Fixed an issue with overlapping blocks on settings page which caused the save button to disappear
 * Added scrollbar to settings block on overflow
