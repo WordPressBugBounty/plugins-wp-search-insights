@@ -1,9 +1,10 @@
 <?php
 /**
- * Plugin Name: WP Search Insights - Privacy-Friendly Search Analytics
+ * Plugin Name: Search Insights - Privacy-Friendly Search Analytics
  * Plugin URI: https://www.wordpress.org/plugins/wp-search-insights
- * Description: WP Search Insights shows you what your users are looking for on your site, and which searches don't have results
- * Version: 1.4.0
+ * License: GPLv2
+ * Description: Uncover exactly what visitors search for on your site. Make data-driven content decisions, identify content gaps, and improve user experience with privacy-focused search analytics.
+ * Version: 2.0
  * Text Domain: wp-search-insights
  * Domain Path: /languages
  * Author: Mark Wolters
@@ -13,7 +14,7 @@
  */
 
 /*
-    Copyright 2018  WP Search Insights  (email : support@wpsi.io)
+    Copyright 2025  Search Insights  (email : support@wpsi.io)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
@@ -28,7 +29,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-defined( 'ABSPATH' ) or die( "you do not have access to this page!" );
+defined('ABSPATH') or die("you do not have access to this page!");
 
 /**
  * Checks if the plugin can safely be activated, at least php 5.6 and wp 4.6
@@ -39,20 +40,21 @@ if (!function_exists('wpsi_activation_check')) {
     {
         if (version_compare(PHP_VERSION, '5.6', '<')) {
             deactivate_plugins(plugin_basename(__FILE__));
-            wp_die(__('WP Search Insights cannot be activated. The plugin requires PHP 5.6 or higher', 'wp-search-insights'));
+            wp_die(esc_html__('Search Insights cannot be activated. The plugin requires PHP 5.6 or higher', 'wp-search-insights'));
         }
 
         global $wp_version;
         if (version_compare($wp_version, '4.6', '<')) {
             deactivate_plugins(plugin_basename(__FILE__));
-            wp_die(__('WP Search Insights cannot be activated. The plugin requires WordPress 4.6 or higher', 'wp-search-insights'));
+            wp_die(esc_html__('Search Insights cannot be activated. The plugin requires WordPress 4.6 or higher', 'wp-search-insights'));
         }
     }
 }
-register_activation_hook( __FILE__, 'wpsi_activation_check' );
+register_activation_hook(__FILE__, 'wpsi_activation_check');
 
-if ( ! class_exists( 'WPSI' ) ) {
-    class WPSI {
+if (!class_exists('WPSI')) {
+    class WPSI
+    {
         public static $instance;
         public static $search;
         public static $admin;
@@ -61,21 +63,23 @@ if ( ! class_exists( 'WPSI' ) ) {
         public static $help;
         public static $export;
 
-        private function __construct() {
-            self::setup_constants();
-            self::includes();
+        private function __construct()
+        {
+            $this->setup_constants();
+            $this->includes();
 
             self::$search = new search();
 
-            if ( is_admin() ) {
+            if (is_admin()) {
                 self::$review = new wpsi_review();
-                self::$admin  = new WPSI_ADMIN();
-                self::$export  = new WPSI_EXPORT();
-                self::$tour   = new wpsi_tour();
-                self::$help   = new wpsi_help();
+                self::$admin = new WPSI_ADMIN();
+                self::$export = new WPSI_EXPORT();
+                self::$tour = new wpsi_tour();
+                self::$help = new wpsi_help();
             }
 
-            self::hooks();
+            $this->hooks();
+
         }
 
         /**
@@ -85,9 +89,10 @@ if ( ! class_exists( 'WPSI' ) ) {
          * @since 1.0.0
          *
          */
-        public static function get_instance() {
-            if ( ! isset( self::$instance )
-                && ! ( self::$instance instanceof WPSI )
+        public static function get_instance()
+        {
+            if (!isset(self::$instance)
+                && !(self::$instance instanceof WPSI)
             ) {
                 self::$instance = new self();
             }
@@ -95,43 +100,46 @@ if ( ! class_exists( 'WPSI' ) ) {
             return self::$instance;
         }
 
-        private function setup_constants() {
-            define( 'wpsi_url', plugin_dir_url( __FILE__ ) );
-            define( 'wpsi_path',
-                trailingslashit( plugin_dir_path( __FILE__ ) ) );
-            define( 'wpsi_plugin', plugin_basename( __FILE__ ) );
-            define( 'wpsi_plugin_file', __FILE__ );
+        private function setup_constants()
+        {
+            define('wpsi_url', plugin_dir_url(__FILE__));
+            define('wpsi_path',
+                trailingslashit(plugin_dir_path(__FILE__)));
+            define('wpsi_plugin', plugin_basename(__FILE__));
+            define('wpsi_plugin_file', __FILE__);
 
-            define( 'wpsi_version', '1.4.0');
+            define('wpsi_version', '2.0');
         }
 
-        private function includes() {
-            if ( is_admin() ) {
-                require_once( wpsi_path . 'upgrade.php' );
-                require_once( wpsi_path . 'class-admin.php' );
-                require_once( wpsi_path . 'class-export.php' );
-                require_once( wpsi_path . 'dashboard_tabs.php' );
-                require_once( wpsi_path . 'class-help.php' );
-                require_once( wpsi_path . 'class-review.php' );
-                require_once( wpsi_path . 'shepherd/tour.php' );
-                require_once( wpsi_path . 'grid/grid-enqueue.php' );
+        private function includes()
+        {
+            if (is_admin()) {
+                require_once(wpsi_path . 'upgrade.php');
+                require_once(wpsi_path . 'class-admin.php');
+                require_once(wpsi_path . 'class-export.php');
+                require_once(wpsi_path . 'dashboard_tabs.php');
+                require_once(wpsi_path . 'class-help.php');
+                require_once(wpsi_path . 'class-review.php');
+                require_once(wpsi_path . 'shepherd/tour.php');
+                require_once(wpsi_path . 'grid/grid-enqueue.php');
+                require_once(wpsi_path . 'includes/class-modal.php');
             }
-            require_once( wpsi_path . 'class-search.php' );
-            require_once( wpsi_path . 'integrations/integrations.php' );
+
+            // We should load pro on front-end, what shouldn't be included on the front-end won't be loaded
+            if (file_exists(wpsi_path . 'pro/class-pro.php')) {
+                require_once(wpsi_path . 'pro/class-pro.php');
+                WPSI_PRO::get_instance();
+            }
+
+            require_once(wpsi_path . 'class-search.php');
+            require_once(wpsi_path . 'integrations/integrations.php');
         }
 
-        /**
-         * Get directory of free plugin
-         * @return string
-         */
-
-        public static function get_actual_directory_name() {
-            return basename( __DIR__ );
-        }
-
-        private function hooks() {
+        private function hooks()
+        {
 
         }
+
     }
 
     /**
@@ -146,17 +154,39 @@ if ( ! class_exists( 'WPSI' ) ) {
     );
 }
 
-function search_insights_activation_hook() {
-    update_option( 'wpsi_min_term_length', 0 );
-    update_option( 'wpsi_max_term_length', 50 );
-    update_option( 'wpsi_select_dashboard_capability', 'activate_plugins' );
-    update_option( 'wpsi_select_term_deletion_period', 'never' );
+/**
+ * Redirect to dashboard after activation for tour
+ */
+function wpsi_activation_redirect($plugin)
+{
+    if ($plugin === plugin_basename(__FILE__) && !get_option('wpsi_tour_cancelled')) {
+        // Ensure we don't redirect when tour is already cancelled
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_redirect is a safe WordPress function
+        exit(wp_redirect(admin_url('admin.php?page=wpsi-settings-page&tour=1')));
+    }
 }
+
+add_action('activated_plugin', 'wpsi_activation_redirect');
+
+function search_insights_activation_hook()
+{
+    update_option('wpsi_min_term_length', 0);
+    update_option('wpsi_max_term_length', 50);
+    update_option('wpsi_select_dashboard_capability', 'activate_plugins');
+    update_option('wpsi_select_term_deletion_period', 'never');
+
+    if ( ! get_option('wpsi_version_two_installation_time' ) ) {
+        update_option('wpsi_version_two_installation_time', time() );
+    }
+}
+
 //Call register activation hook outside of class.
-register_activation_hook( __FILE__, 'search_insights_activation_hook' );
+register_activation_hook(__FILE__, 'search_insights_activation_hook');
 
 
-function wpsi_clear_scheduled_hooks(){
-    wp_clear_scheduled_hook( 'wpsi_every_five_minutes_hook' );
+function wpsi_clear_scheduled_hooks()
+{
+    wp_clear_scheduled_hook('wpsi_every_five_minutes_hook');
 }
-register_deactivation_hook( __FILE__, 'wpsi_clear_scheduled_hooks' );
+
+register_deactivation_hook(__FILE__, 'wpsi_clear_scheduled_hooks');
