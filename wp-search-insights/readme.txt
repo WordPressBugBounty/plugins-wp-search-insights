@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/wpsearchinsights
 Tags: search analytics, search, statistics, insights, content
 Requires at least: 4.8
 License: GPLv2
-Tested up to: 6.9
+Tested up to: 7.1
 Requires PHP: 7.0
 Stable tag: 2.1
 
